@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmed</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+        .container {
+            margin-top: 50px;
+            max-width: 600px;
+        }
+        .card {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .card-header {
+            background-color: #343a40;
+            color: #fff;
+            padding: 10px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        .card-body {
+            padding: 20px;
+        }
+        .label {
+            font-weight: bold;
+        }
+        .value {
+            margin-bottom: 10px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            width: 100%;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h5>Booking Confirmed</h5>
+            </div>
+            <div class="card-body">
+                <div class="label">Bus Name :</div>
+                <div class="value" id="busName"></div>
+                <div class="label">Bus Type :</div>
+                <div class="value" id="busType"></div>
+
+                <div class="label">From:</div>
+                <div class="value" id="fromLocation"></div>
+                <div class="label">To :</div>
+                <div class="value" id="toLocation"></div>
+
+                <div class="label">Seat Numbers:</div>
+                <div class="value" id="seatNumbers"></div>
+
+                <div class="label">Arrival Time:</div>
+                <div class="value" id="arrivalTime"></div>
+                <div class="label">Departure Time :</div>
+                <div class="value" id="departureTime"></div>
+
+
+                <div class="label">Booking Time:</div>
+                <div class="value" id="bookingTime"></div>
+
+                <div class="label">Passengers:</div>
+                <div id="passengerDetails"></div>
+            </div>
+        </div>
+        <button id="downloadPdf" class="btn btn-primary mt-3">Download PDF</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script type="text/javascript">
+        // Retrieve booking details from local storage
+        var bookingDetails = JSON.parse(localStorage.getItem('bookingconfirmed'));
+console.log(bookingDetails);
+        // Populate HTML elements with booking details
+        document.getElementById('seatNumbers').textContent = bookingDetails.passengers.map(passenger => passenger.seatNumber).join(', ');
+        document.getElementById('bookingTime').textContent = bookingDetails.bookingTimestamp;
+        document.getElementById('busName').textContent = bookingDetails.busName;
+        document.getElementById('busType').textContent = bookingDetails.busType;
+        document.getElementById('fromLocation').textContent = bookingDetails.from;
+        document.getElementById('toLocation').textContent = bookingDetails.to;
+        document.getElementById('arrivalTime').textContent = bookingDetails.arrivalTime;
+        document.getElementById('departureTime').textContent = bookingDetails.departureTime;
+        
+        
+        // Display passenger details
+        var passengerDetailsDiv = document.getElementById('passengerDetails');
+        bookingDetails.passengers.forEach(passenger => {
+            var passengerInfo = document.createElement('div');
+            passengerInfo.classList.add('value');
+            passengerInfo.textContent = `Name: ${passenger.name}, Age: ${passenger.age}, Gender: ${passenger.gender}`;
+            passengerDetailsDiv.appendChild(passengerInfo);
+        });
+
+        // Event listener for download PDF button
+       
+            document.getElementById('downloadPdf').addEventListener('click', function() {
+    const seatNumbers = document.getElementById('seatNumbers').textContent;
+    const bookingTime = document.getElementById('bookingTime').textContent;
+    const passengerDetails = document.getElementById('passengerDetails').textContent;
+    const busName = document.getElementById('busName').textContent;
+    const busType = document.getElementById('busType').textContent;
+    const fromLocation = document.getElementById('fromLocation').textContent;
+    const toLocation = document.getElementById('toLocation').textContent;
+    const arrivalTime = document.getElementById('arrivalTime').textContent;
+    const departureTime = document.getElementById('departureTime').textContent;
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    doc.text("Ticket Confirmed", 10, 10);
+    doc.text(`Seat Numbers: ${seatNumbers}`, 10, 20);
+    doc.text(`Booking Time: ${bookingTime}`, 10, 30);
+    doc.text(`Bus Name: ${busName}`, 10, 40);
+    doc.text(`Bus Type: ${busType}`, 10, 50);
+    doc.text(`From: ${fromLocation}`, 10, 60);
+    doc.text(`To: ${toLocation}`, 10, 70);
+    doc.text(`Arrival Time: ${arrivalTime}`, 10, 80);
+    doc.text(`Departure Time: ${departureTime}`, 10, 90);
+    doc.text(`Passenger Details:\n${passengerDetails}`, 10, 100);
+    doc.save("ticketConfirmed.pdf");                
+});
+    </script>    
+</body>
+</html>

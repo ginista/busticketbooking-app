@@ -1,0 +1,47 @@
+body {
+    background-image: url('login.jpg'); /* Replace 'background-image.jpg' with the path to your background image */
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    color: #ffffff; /* White text color */
+}
+
+.container {
+    padding-top: 100px; /* Adjust vertical spacing */
+}
+
+.card {
+    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black background for the card */
+    border: none; /* No border */
+}
+
+.form-label {
+    color: #ffffff; /* White color for the labels */
+}
+
+.form-control {
+    border-color: #63545d70; /* Greenish border color for form controls */
+    color: #ffffff; /* White text color */
+}
+
+.form-text {
+    color: #ffffff; /* Dark color for form help text */
+}
+
+
+.btn-primary {
+    background-color: #63545d70; /* Greenish button color */
+    border-color: #63545d70; /* Greenish border color for button */
+}
+
+.btn-primary:hover {
+    background-color: #63545d70; /* Darker green on hover */
+    border-color: #63545d70; /* Darker green border on hover */
+}
+.registration-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 30px;
+    color: grey; /* Greenish color for the title */
+}

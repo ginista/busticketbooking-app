@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse and Select Bus Routes</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        .table {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .table th {
+            background-color: #343a40;
+            color: #fff;
+        }
+        .page-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .page-title {
+            font-size: 24px;
+            color: #6c757d;
+            margin-bottom: 20px;
+            font-family: 'Arial', sans-serif;
+        }
+        .btn-primary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+        .btn-primary:hover {
+            background-color: #495057;
+            border-color: #495057;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        .form-label {
+            font-size: 14px;
+        }
+        .form-control {
+            font-size: 14px;
+        }
+        .card {
+            margin-bottom: 20px;
+            border: 1px solid #dee2e6;
+            border-radius: .25rem;
+            transition: all 0.3s ease-in-out;
+        }
+        .card-header {
+            background-color: #6c757d;
+            border-bottom: 1px solid #dee2e6;
+            font-weight: bold;
+            color: #fff;
+        }
+        .card-body {
+            padding: 20px;
+        }
+        .card-title {
+            margin-bottom: 10px;
+            color: #343a40;
+        }
+        .list-group-item {
+            border: none;
+            padding: .75rem 1.25rem;
+            border-top: 1px solid #dee2e6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .icon {
+            margin-right: 10px;
+            font-size: 24px;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        .btn-primary:hover {
+            background-color: #495057;
+            border-color: #495057;
+            transform: translateY(-3px);
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background-image: url('route.jpg'); /* Specify the path to your background image */
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            background-color: #f0f0f0;
+        }
+        
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="./home.html">Ticket Booking System</a>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link" href="./bookingHistory.html">Booking History</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="./myprofile.html">My Profile</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="./changePassword.html">Change Password</a>
+              </li>
+            </ul>
+          </div>
+          <div class="navbar-nav ml-auto">
+            <a class="nav-link" href="./home.html">Logout</a>
+          </div>
+        </div>
+      </nav>
+      
+    <div class="container mt-5">
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label for="from" class="form-label">From:</label>
+                    <input type="text" class="form-control" id="from">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label for="to" class="form-label">To:</label>
+                    <input type="text" class="form-control" id="to">
+                </div>
+            </div>
+            <div class="col-md-4 d-flex align-items-end justify-content-end">
+                <button class="btn btn-primary" onclick="handleSearch()">Search Buses</button>
+            </div>
+        </div>
+
+        <h2 class="mt-5 mb-4 page-title">Buses Found</h2>
+        <div id="busCards" class="row">
+            <!-- Bus cards will be generated dynamically here -->
+        </div>
+    </div>
+
+    <script>
+        // Function to fetch bearer token from local storage
+        // Function to continue booking and store bus details in local storage
+function continueBooking(busName, busType, departureTime, arrivalTime, price, availableSeats) {
+    var bookingDetails = {
+        busName: busName,
+        busType: busType,
+        departureTime: departureTime,
+        arrivalTime: arrivalTime,
+        price: price,
+        availableSeats: availableSeats
+    };
+
+    // Store booking details in local storage
+    localStorage.setItem('bookingDetails', JSON.stringify(bookingDetails));
+
+    // Redirect to booking confirmation page
+    window.location.href = "./bookingConfirmation.html";
+}
+
+        function getBearerToken() {
+            return localStorage.getItem('token');
+        }
+    
+        // Function to handle search for bus routes
+        function handleSearch() {
+            var from = document.getElementById('from').value;
+        var to = document.getElementById('to').value;
+
+        // Store the "From" and "To" details in local storage
+        localStorage.setItem('fromLocation', from);
+        localStorage.setItem('toLocation', to);
+    
+            // Fetch bearer token
+            var token = getBearerToken();
+    
+            // Make sure token is available
+            if (!token) {
+                console.error('Token not found in local storage');
+                return;
+            }
+    
+            // Construct the URL with parameters
+            var url = `http://localhost:8080/buses?from=${from}&to=${to}`;
+    
+            // Make the fetch request with token included in the header
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch bus routes');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Process the response data
+                updateUI(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Handle error, show message to user, etc.
+            });
+        }
+    
+        // Function to update UI with fetched bus routes data
+        function updateUI(busRoutes) {
+            var busCardsContainer = document.getElementById('busCards');
+            busCardsContainer.innerHTML = ''; // Clear previous data
+    
+            busRoutes.forEach(route => {
+                var card = `
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="icon">&#x1F68C;</span> Bus Operator: ${route.busName}
+                            <span class="icon">&#x1F68C;</span> Bus Operator: ${route.busId}
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">${route.busType}</h5>
+                            <p><span class="icon">&#x23F0;</span> ${route.departureTime} - ${route.arrivalTime}</p>
+                            <p><span class="icon">&#x1F4B8;</span> Price: ${route.price}</p>
+                            <p><span class="icon">&#x1F4CD;</span> Available Seats: ${route.availableSeats}</p>
+                            ...
+<a href="bookingConfirmation.html" class="btn btn-primary mt-3" onclick="continueBooking('${route.busId}','${route.busName}', '${route.busType}', '${route.departureTime}', '${route.arrivalTime}', ${route.price}, ${route.availableSeats})">Continue</a>
+...
+
+                            
+                        </div>
+                    </div>
+                </div>`;
+                busCardsContainer.innerHTML += card;
+            });
+        }
+
+        function continueBooking(busId, busName, busType, departureTime, arrivalTime, price, availableSeats) {
+    var bookingDetails = {
+        busId: busId,
+        busName: busName,
+        busType: busType,
+        departureTime: departureTime,
+        arrivalTime: arrivalTime,
+        price: price,
+        availableSeats: availableSeats
+    };
+
+    // Store booking details in local storage
+    localStorage.setItem('bookingDetails', JSON.stringify(bookingDetails));
+
+    // Redirect to booking confirmation page
+    window.location.href = "./bookingConfirmation.html";
+}
+
+    </script>
+    
+
+</body>
+</html>

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bus Route Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+      <style>
+        body {
+            background-image: url('confirmBooking.png'); /* Specify the path to your background image */
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            background-color: #f0f0f0; /* Fallback color */
+            color: #212529;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        .card-header {
+            background-color: #343a40;
+            color: #ffffff;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="./home.html">Ticket Booking System</a>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link" href="./bookingHistory.html">Booking History</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="./myprofile.html">My Profile</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="./changePassword.html">Change Password</a>
+              </li>
+            </ul>
+          </div>
+          <div class="navbar-nav ml-auto">
+            <a class="nav-link" href="./home.html">Logout</a>
+          </div>
+        </div>
+      </nav>
+<div class="container">
+    <!-- Bus Route Details -->
+    <div class="card mb-3">
+        <div class="card-header">
+            Bus Route Details
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="busName" class="form-label">Bus Name:</label>
+                    <input type="text" class="form-control" id="busName" value="Primo" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label for="busType" class="form-label">Bus Type:</label>
+                    <input type="text" class="form-control" id="busType" value="A/C Sleeper (2+1)" readonly>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="departureTime" class="form-label">Departure Time:</label>
+                    <input type="text" class="form-control" id="departureTime" value="18:45" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label for="arrivalTime" class="form-label">Arrival Time:</label>
+                    <input type="text" class="form-control" id="arrivalTime" value="06:55" readonly>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="price" class="form-label">Price:</label>
+                    <input type="text" class="form-control" id="price" value="INR 1430 - 1380" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label for="availableSeats" class="form-label">Available Seats:</label>
+                    <input type="text" class="form-control" id="availableSeats" value="36" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label for="fromLocation" class="form-label">From:</label>
+                    <input type="text" class="form-control" id="fromLocation" value="Chennai" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label for="toLocation" class="form-label">To:</label>
+                    <input type="text" class="form-control" id="toLocation" value="Nagercoil" readonly>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Details -->
+    
+    <div class="card mb-3">
+        <div class="card-header">
+            Passenger Details
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Age</th>
+                                <th>Gender</th>
+                            </tr>
+                        </thead>
+                        <tbody id="passengerTableBody">
+                            <!-- Passenger details will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <button id="addPassengerButton" class="btn btn-primary" type="button">Add Passenger</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button id="bookButton" class="btn btn-primary me-md-3" type="button">Book</button>
+
+    <!-- Script to handle booking -->
+<script>
+    // Function to handle booking
+    document.getElementById('bookButton').addEventListener('click', function() {
+        // Gather passenger details from the form
+        var passengers = [];
+        var passengerRows = document.querySelectorAll('#passengerTableBody tr');
+        passengerRows.forEach(function(row) {
+            var name = row.querySelector('.passenger-name').value;
+            var age = row.querySelector('.passenger-age').value;
+            var gender = row.querySelector('.passenger-gender').value;
+
+            // Create passenger object and add to passengers array
+            passengers.push({ name: name, age: age, gender: gender });
+        });
+       
+        var id = localStorage.getItem('busId');
+        // Prepare payload
+        var payload = {
+            busId:id,
+             // Assuming you have the busId available
+            passengers: passengers
+        };
+
+        // Get token from wherever it's stored (e.g., localStorage)
+        var token = localStorage.getItem('token');
+
+        // Make POST request
+        fetch('http://localhost:8080/bookings', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token // Add token to headers
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to book the bus');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Handle success response
+            console.log('Booking successful:', data);
+            localStorage.setItem('bookingconfirmed', JSON.stringify(data));
+            window.location.href = 'bookingConfirmed.html';
+            // Redirect or display success message as needed
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            // Handle error, show message to user, etc.
+        });
+    });
+</script>
+
+    
+    <!-- Script for dynamic input fields -->
+    <script>
+        // Function to add new input fields for passengers
+        document.getElementById('addPassengerButton').addEventListener('click', function() {
+            var passengerTableBody = document.getElementById('passengerTableBody');
+            var newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td><input type="text" class="form-control passenger-name" placeholder="Name"></td>
+                <td><input type="text" class="form-control passenger-age" placeholder="Age"></td>
+                <td><input type="text" class="form-control passenger-gender" placeholder="Gender"></td>
+            `;
+            passengerTableBody.appendChild(newRow);
+        });
+    </script>
+    
+    <!-- Script to populate booking details -->
+    <script>
+        // Function to get booking details from local storage
+        function getBookingDetails() {
+            var bookingDetails = localStorage.getItem('bookingDetails');
+            var busId = bookingDetails.busId;
+            localStorage.setItem(busId,'busId');
+            return bookingDetails ? JSON.parse(bookingDetails) : null;
+        }
+    
+        // Function to populate booking details in the form fields
+        function populateBookingDetails() {
+            var bookingDetails = getBookingDetails();
+    console.log(bookingDetails);
+            if (bookingDetails) {
+                // Set the busId in local storage
+
+                localStorage.setItem('busId', bookingDetails.busId);
+                document.getElementById('busName').value = bookingDetails.busId;
+                document.getElementById('busType').value = bookingDetails.busType;
+                document.getElementById('departureTime').value = bookingDetails.departureTime;
+                document.getElementById('arrivalTime').value = bookingDetails.arrivalTime;
+                document.getElementById('price').value = bookingDetails.price;
+                document.getElementById('availableSeats').value = bookingDetails.availableSeats;
+                document.getElementById('fromLocation').value = localStorage.getItem('fromLocation');
+                document.getElementById('toLocation').value = localStorage.getItem('toLocation');
+            }
+        }
+    
+        // Call populateBookingDetails function when the window is loaded
+        window.onload = function() {
+            populateBookingDetails();
+        };
+    </script>
+    
+</body>
+</html>
